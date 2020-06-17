@@ -1,0 +1,86 @@
+Upper bound on total limit of possible vertical seams: 
+col. # ^(row #) This is because this would be the amount of seams if the vertical rule could be broken. In other words, a pixel’s children is not just the three pixels below it (two diagonal and one vertical), but every pixel in the row below it. This amount of children will always be greater than or equal to the correct amount of children. Therefore, this is an upper bound.
+
+Time complexity of the naive solution: Col#^row# * row# * max(col#, row#)
+For each pixel, you have to calculate the energy and find the pixel (equiv. To my matrix-get and calc-energy functions down below)-> max(row#, col#)
+And you have to do this row# of times since there are that many pixels in a seam.
+Then you have to do all of the above col#^row# of times since it is the upper bound of how many total seams there are
+Then you take the minimum, which is outweighed by the other operations.
+
+
+
+Liquify memoization: max(row#, col#) * row# * col# * #of deletions
+
+Calls image-to-energy-matrix -> max(row#, col#) *  row# * col#
+Calls get-minimum-seam on the first row of pixels -> get-min-seam does a linear operation (in row#) and is recursively called on three children. However, get-min-seam, due to memoization, will only be run on every pixel once. Therefore it is row# * col# * row#
+Calls minimum on the min-seams for each top-row pixel-> col#
+Calls remove-seam -> max(row#, col#) * row#
+Calls image-data-to-image -> row# * col#
+Recurs with k - 1 where k is number to cut seams -> do everything above k times
+
+Image-to-energy-matrix =max(row#, col#) *  row# * col#
+Calls pixels on the input image of size n pixels. -> constant
+Calls map on the pixels and does addition with each pixel -> row# * col#
+Calls map on the pixels and does calc-energy on each elt -> max(row#, col#) *  row# * col#
+
+Get-minimum-seam -> 3^n * n where n is amount of rows and is worst case.
+
+Calls length on input matrix of n rows -> n
+If it is last row then return seam -> constant
+Else, call get-minimum-seam on each child (3 of them), in the worst case this would be the top pixel, which means three children would branch off every time until the bottom, so -> 3^n multiplied by the rest of the function (n… the first step).
+
+Calc-energy = max(n, k), where n is row count and k is col. count
+
+Calls matrix-get 8 times with input matrix of n rows and k cols -> matrix-get = max(n, k)
+Does addition and multiplication -> constant
+Does num-sqr and num-sqrt -> num-sqr + num-sqrt, assume these are constant
+
+Matrix-get - linear in max(row, col) -> max(n, k)
+
+Calls length on the matrix with n rows -> n
+Calls length on the first list on a matrix with k columns -> k
+Calls get on a list of size n then get on a list of size k -> get(n) + get(k), assume get is linear
+
+Minimum - worst case = n * runtime of input func, scope of this program = n -> linear
+
+Calls a function on the first two elts of a list with size n -> input func(an elt) (in regards to this program, the input func will always be a constant function… so it is constant)
+Recurs with the rest of the list -> do everythin n times
+
+Remove-seam  = max(n, k) * r, where n = row count, k = col. Count, r = length of seam, but r in the worst case would be the row#
+
+Calls pixels  on img with m pixels-> constant
+Calls get on a matrix with n rows -> get(n)
+Calls remove on a list of a mat with k columns -> remove(k)
+Recurs with the rest of the seam -> do everything r times where r is the length of the seam
+
+Remove = n, linear, where n is size of list
+Checks a condition -> constant
+Recurs with rest of list if condition not satisfied, where the list has n elements -> n (worst case...that is, if the index we are removing is the last index)
+
+
+Liquify-dynamic-programming =  row# * col#  * max(row#, col#) * of deletions
+Calls Image-to-energy-matrix -> max(row#, col#) *  row# * col#
+Creates memory -> row# * col#
+Calls setup seams -> row# * col#  * max(row#, col#)
+Calls to array to list and maps each elt with its value field-> col#
+Sort col# of elements -> col#
+Take the minimum of row 1 -> col#
+Calls remove-seam -> max(row#, col#) * row#
+Calls image-data-to-image -> row# * col#
+Recurs with k - 1 where k is number to cut seams -> do everything above k times
+
+
+
+
+
+Set-up-seams === row# * col#  * max(row#, col#)
+Map the following process col# times
+Call matrix-get -> max(row#, col#)
+Gets desired value in memory -> constant
+Filter and map a list of three values -> constant
+Call minimum on three values -> constant
+Make a path -> constant
+add new value to memory -> constant
+End of map
+Call setup seams on the row above -> recur row# times
+
