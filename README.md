@@ -1,1 +1,2 @@
-# Fluid-Images-Functional-Algorithm
+# Seam-Carving-Functional-Algorithm
+Description: 
